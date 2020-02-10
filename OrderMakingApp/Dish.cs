@@ -11,6 +11,8 @@ namespace OrderMakingApp
         public string Name { get; private set; }
         public Specialization Cuisine { get; private set; }
         public TimeSpan CookingTime { get; private set; }
+        public float WeightInGrams { get; private set; }
+
         private DateTime cookedAt = DateTime.MinValue;
         public DateTime CookedAt 
         { 
@@ -22,7 +24,7 @@ namespace OrderMakingApp
                     cookedAt = value;
             }
         }
-        public readonly float WeightInGrams;
+        
         public List<Ingridient> Ingridients { get; private set; }
 
         public Dish(string name, Specialization spec, TimeSpan cookingTime, float weight, List<Ingridient> ingridients)
