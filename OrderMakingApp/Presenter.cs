@@ -6,33 +6,66 @@ using System.Threading.Tasks;
 
 namespace OrderMakingApp
 {
-    class Presenter
-    {
-        readonly Kitchen Kitchen_;
-        public readonly List<Dish> Menu;
 
-        public Presenter()
+    public interface IPresenter
+    {
+        void MakeOrder(List<string> DishNames);
+        List<Dish> GetMenu();
+    }
+
+    class Presenter : IPresenter
+    {
+        readonly IModel Model; // kitchen
+        readonly IView View; // form
+
+        public Presenter(IView view)
         {
-            Kitchen_ = new Kitchen();
-            Menu = Kitchen_.Dishes;
+            Model = new Kitchen();
+            this.View = view;
         }
 
-        public Order MakeOrder(List<string> DishNames)
+        public List<Dish> GetMenu()
         {
-            List<Dish> OrderedDishes = ConvertNamesToRealDishes(DishNames);
-            DateTime ServingTime = Kitchen_.AcceptOrder(OrderedDishes);
-            Order NewOrder = new Order(OrderedDishes, ServingTime);
-            return NewOrder;
+            return Model.GetMenu();
+        }
+        public void MakeOrder(List<string> DishNames)
+        {
+            if (DishNames.Count == 0)
+                View.ShowResponseError("Ви не обрали жодної страви");
+            else
+            {
+                List<Dish> OrderedDishes = ConvertNamesToRealDishes(DishNames);
+                Order NewOrder = Model.AcceptOrder(OrderedDishes);
+                if (NewOrder.ServingTime < DateTime.Now)
+                    View.ShowResponseError("На жаль, ми не можемо приготувати ваше замовлення");
+                else
+                {
+                    string response = FormResponseForView(NewOrder);
+                    View.ShowResponseOK(response);
+                }
+            }
         }
 
         private List<Dish> ConvertNamesToRealDishes(List<string> DishNames)
         {
             List<Dish> dishes = new List<Dish>();
+            List<Dish> menu = GetMenu();
             foreach (string dishName in DishNames)
             {
-                dishes.Add(Menu.Where(dish => dish.Name == dishName).First());
+                dishes.Add(menu.Where(dish => dish.Name == dishName).First());
             }
             return dishes;
+        }    
+        
+        private string FormResponseForView(Order order)
+        {
+            string response = "";
+            response += String.Format("Ваше замовлення буде готове о {0}\n", order.ServingTime.ToShortTimeString());
+            foreach (Dish dish in order.OrderedDishes)
+            {
+                response += String.Format("Страва {0} буде готова о {1}\n", dish.Name, dish.CookedAt.ToShortTimeString());
+            }
+            return response;
         }
     }
 }

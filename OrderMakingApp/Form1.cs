@@ -10,15 +10,21 @@ using System.Windows.Forms;
 
 namespace OrderMakingApp
 {
-    public partial class Form1 : Form
+    interface IView
     {
-        readonly Presenter Presenter_;
-        public Form1()
+        void ShowResponseOK(string text);
+        void ShowResponseError(string text);
+    }
+
+    public partial class MainForm : Form, IView
+    {
+        readonly IPresenter Presenter_;
+        public MainForm()
         {
             InitializeComponent();
-            Presenter_ = new Presenter();
+            Presenter_ = new Presenter(this);
             TableMenu.AutoGenerateColumns = false;
-            TableMenu.DataSource = Presenter_.Menu;
+            TableMenu.DataSource = Presenter_.GetMenu();
             
         }
 
@@ -28,17 +34,25 @@ namespace OrderMakingApp
             var checkedRows = from DataGridViewRow row in TableMenu.Rows
                               where Convert.ToBoolean(row.Cells["IsOrderedDishColumn"].Value) == true
                               select row;
-
             foreach (var row in checkedRows)
             {
                 row.Cells["IsOrderedDishColumn"].Value = false;
                 DishesNames.Add(row.Cells["DishName"].Value.ToString());
             }
-
-            Order CurrentOrder = Presenter_.MakeOrder(DishesNames);
-            MessageBox.Show(String.Format("Ваше замовлення буде готове {0}", CurrentOrder.ServingTime.ToString()), "Інформація про замовлення", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            
+            Presenter_.MakeOrder(DishesNames);
+            //MessageBox.Show(String.Format("Ваше замовлення буде готове {0}", CurrentOrder.ServingTime.ToString()), "Інформація про замовлення", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
+        public void ShowResponseOK(string text)
+        {
+            MessageBox.Show(text, "Інформація про замовлення", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
 
+        public void ShowResponseError(string text)
+        {
+            MessageBox.Show(text, "Помилка у замовленні", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+        }
     }
 }
