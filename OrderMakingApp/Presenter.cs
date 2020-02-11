@@ -11,6 +11,7 @@ namespace OrderMakingApp
     {
         void MakeOrder(List<string> DishNames);
         List<Dish> GetMenu();
+        string FormResponseForView(Order order);
     }
 
     class Presenter : IPresenter
@@ -57,7 +58,7 @@ namespace OrderMakingApp
             return dishes;
         }    
         
-        private string FormResponseForView(Order order)
+        public string FormResponseForView(Order order)
         {
             string response = "";
             response += String.Format("Ваше замовлення буде готове о {0}\n", order.ServingTime.ToShortTimeString());

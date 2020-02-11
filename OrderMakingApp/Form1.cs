@@ -34,6 +34,7 @@ namespace OrderMakingApp
             var checkedRows = from DataGridViewRow row in TableMenu.Rows
                               where Convert.ToBoolean(row.Cells["IsOrderedDishColumn"].Value) == true
                               select row;
+
             foreach (var row in checkedRows)
             {
                 row.Cells["IsOrderedDishColumn"].Value = false;
@@ -41,7 +42,6 @@ namespace OrderMakingApp
             }
             
             Presenter_.MakeOrder(DishesNames);
-            //MessageBox.Show(String.Format("Ваше замовлення буде готове {0}", CurrentOrder.ServingTime.ToString()), "Інформація про замовлення", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         public void ShowResponseOK(string text)
