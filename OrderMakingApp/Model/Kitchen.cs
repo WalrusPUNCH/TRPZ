@@ -6,18 +6,26 @@ using System.Threading.Tasks;
 
 namespace OrderMakingApp
 {
-    public class Kitchen
+
+    interface IModel
     {
-        private readonly DataBase @base = new DataBase();
+        Order AcceptOrder(List<Dish> dishes);
+        List<Dish> GetMenu();
+    }
+    public class Kitchen : IModel
+    {
+        private readonly IDataBase @base = new DataBase();
         List<Cook> Cooks = new List<Cook>();
-        public readonly List<Dish> Dishes = new List<Dish>();
         public Kitchen()
         {
             Cooks = @base.GetCooks();
-            Dishes = @base.GetDishes();
         }
 
-        public DateTime AcceptOrder(List<Dish> DishesToCook)
+        public List<Dish> GetMenu()
+        {
+            return @base.GetDishes();
+        }
+        public Order AcceptOrder(List<Dish> DishesToCook)
         {
             DateTime ServingTime = DateTime.Now;
             foreach (Dish dish in DishesToCook)
@@ -32,11 +40,11 @@ namespace OrderMakingApp
                 }
                 catch (NullReferenceException)
                 {
-                    return DateTime.MinValue;
+                    return new Order(DishesToCook, DateTime.MinValue);
                 }
             }
 
-            return ServingTime;
+            return new Order(DishesToCook, ServingTime);
         }
     }
 }

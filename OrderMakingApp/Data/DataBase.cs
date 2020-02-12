@@ -6,7 +6,15 @@ using System.Threading.Tasks;
 
 namespace OrderMakingApp
 {
-    class DataBase
+
+    interface IDataBase
+    {
+        List<Cook> GetCooks();
+        List<Dish> GetDishes();
+    }
+
+
+    class DataBase : IDataBase
     {
         public List<Cook> GetCooks()
         {
@@ -64,7 +72,7 @@ namespace OrderMakingApp
                 new Ingridient("Spices")
             };
 
-            dishes.Add(new Dish("French fries", Specialization.American, new TimeSpan(0, 10, 0), 300, ingridients));
+            dishes.Add(new Dish("French Fries", Specialization.American, new TimeSpan(0, 10, 0), 300, ingridients));
 
             ingridients = new List<Ingridient>()
             {
@@ -81,29 +89,9 @@ namespace OrderMakingApp
                 new Ingridient("Spices")
             };
 
-            dishes.Add(new Dish("Chicken curry", Specialization.Asian, new TimeSpan(1, 5, 0), 750, ingridients));
+            dishes.Add(new Dish("Chicken Curry", Specialization.Asian, new TimeSpan(1, 5, 0), 750, ingridients));
 
             return dishes;
         }
-        /*
-        public List<Ingridient> GetIngridients()
-        {
-            List<Ingridient> ingridients = new List<Ingridient>()
-            {
-                new Ingridient("Vegetables"),
-                new Ingridient("Fruits"),
-                new Ingridient("Meat"),
-                new Ingridient("Fish"),
-                new Ingridient("Chicken"),
-                new Ingridient("Sauce"),
-                new Ingridient("Dough"),
-
-                new Ingridient("Oil"),
-                new Ingridient("Rice"),
-                new Ingridient("Spices")
-            };
-
-            return ingridients;
-        }*/
     }
 }

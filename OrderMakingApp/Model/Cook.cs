@@ -52,9 +52,12 @@ namespace OrderMakingApp
                 TimeSpan CookingTimeWithBonus = dish.CookingTime - TimeSpan.FromTicks((long)(dish.CookingTime.Ticks * QualificationBonus));
 
                 if (EndOfWorkTime < DateTime.Now)
+                {
                     EndOfWorkTime = DateTime.Now + CookingTimeWithBonus;
+                }
                 else
                     EndOfWorkTime += CookingTimeWithBonus;
+                dish.CookedAt = EndOfWorkTime;
                 Queue.Add(dish);
                 return EndOfWorkTime;
             }
